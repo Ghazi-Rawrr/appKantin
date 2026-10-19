@@ -8,12 +8,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/login-action@v3
+      - name: Checkout Kode
+        uses: actions/checkout@v4
+
+      # 1. Setup Environment PHP di Runner GitHub Actions
+      - name: Setup PHP Environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      # 2. Cek Sintaks Semua File PHP dalam Repositori
+      - name: Cek sintaks PHP
+        run: |
+          for f in $(find . -name '*.php'); do
+            php -l "$f" || exit 1
+          done
+
+      # 3. Login ke Docker Hub
+      - name: Login ke Docker Hub
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - uses: docker/build-push-action@v6
+
+      # 4. Build dan Push Image ke Docker Hub
+      - name: Build dan Push Image
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -25,7 +45,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: appleboy/ssh-action@v1
+      - name: SSH ke Manager & Rolling Update Swarm
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ubuntu
