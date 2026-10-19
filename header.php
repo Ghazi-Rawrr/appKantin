@@ -1,8 +1,8 @@
 <?php
 // Cegah cache: info server harus selalu berasal dari request yang baru
 if (!headers_sent()) {
-    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-    header('Pragma: no-cache');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0')
+    header('Pragma: no-cache')
 }
 
 // Info server untuk ditampilkan di header
@@ -23,12 +23,12 @@ if (!function_exists('ambil_ip_server')) {
         }
         // Cadangan: gethostbyname bila /proc tidak tersedia
         if (!$ips) {
-            $ip = gethostbyname($hostname);
+            $ip = gethostbyname($hostname)
             if ($ip !== $hostname) {
                 $ips[$ip] = $ip;
             }
         }
-        return array_values($ips);
+        return array_values($ips)
     }
 }
 
@@ -75,7 +75,7 @@ $info_warna     = 'hsl(' . (hexdec(substr(md5($info_hostname), 0, 6)) % 360) . '
         @media (max-width: 575.98px) {
             .info-server { font-size: .72rem; }
             .info-server .container { gap: .2rem 1rem; }
-        }
+        
     </style>
 </head>
 <body>
